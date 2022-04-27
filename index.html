@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Дерья. Обход - pre-order</title>
+  </head>
+  <style>
+    html,
+    body {
+      padding: 0;
+      margin: 0;
+    }
+    html,
+    body,
+    *,
+    *::after,
+    *::before {
+      box-sizing: border-box;
+    }
+    .wrapper {
+      background-color: #191919;
+      font-size: 16px;
+      font-family: sans-serif;
+      font-weight: 400;
+      min-height: 100vh;
+      color: #fff;
+    }
+    .container {
+      width: 900px;
+      margin: 0 auto;
+    }
+    .post {
+      padding: 15px;
+    }
+    .post__content {
+      border: 1px solid #fff;
+      padding: 15px;
+    }
+    button {
+      width: 100%;
+      padding: 12px 20px;
+      background-color: rgb(36, 91, 173);
+      text-align: center;
+      color: wheat;
+    }
+    .post__comments {
+      padding: 15px;
+      padding-right: 0;
+      background-color: rgb(66, 66, 66);
+    }
+    .comment {
+      margin-bottom: 10px;
+
+      padding-left: 20px;
+    }
+    .comment__content {
+      border-left: 1px solid #962424;
+      padding-bottom: 10px;
+    }
+    .comment__btn {
+      width: 140px;
+      padding: 0;
+    }
+    .comment__autor {
+      font-size: 22px;
+      color: #962424;
+    }
+  </style>
+  <body>
+    <div class="wrapper">
+      <div class="container">
+        <div class="post">
+          <div class="post__content">
+            <h1>POST TITLE</h1>
+            <br />
+            <p>post text</p>
+            <br />
+            <button class="post__show-comment">post__show-comment</button>
+          </div>
+          <div class="post__comments"></div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const domWrapperForComments = document.querySelector(".post__comments");
+
+    const comments = [
+      // LVL-1
+      {
+        id: "lvl-1-comment-1",
+        autor: "autor",
+        text: "text",
+        comments: [
+          // LVL-2
+          {
+            id: "lvl-2-comment-1",
+            autor: "autor",
+            text: "text",
+            comments: [],
+          },
+          {
+            id: "lvl-2-comment-1",
+            autor: "autor",
+            text: "text",
+            comments: [
+              // LVL-3
+              {
+                id: "lvl-3-comment-1",
+                autor: "autor",
+                text: "text",
+                comments: [],
+              },
+            ],
+          },
+        ],
+      },
+      {
+        id: "lvl-1-comment-1",
+        autor: "autor",
+        text: "text",
+        comments: [
+          // LVL-2
+          {
+            id: "lvl-2-comment-1",
+            autor: "autor",
+            text: "text",
+            comments: [
+              // LVL-3
+              {
+                id: "lvl-3-comment-1",
+                autor: "autor",
+                text: "text",
+                comments: [],
+              },
+              {
+                id: "lvl-3-comment-1",
+                autor: "autor",
+                text: "text",
+                comments: [
+                  {
+                    id: "lvl-4-comment-1",
+                    autor: "autor",
+                    text: "text",
+                    comments: [],
+                  },
+                ],
+              },
+            ],
+          },
+          {
+            id: "lvl-2-comment-1",
+            autor: "autor",
+            text: "text",
+            comments: [
+              // LVL-3
+              {
+                id: "lvl-3-comment-1",
+                autor: "autor",
+                text: "text",
+                comments: [],
+              },
+            ],
+          },
+        ],
+      },
+    ];
+
+    // функция для создания узла
+    const createTemplateCommentBlock = (node) => {
+      const htmlString = `
+					<div class="comment">
+						<div class="comment__content">
+							<h3 class="comment__autor">${node.autor}</h3>
+							<p class="comment__text">${node.text} <br> ID:${node.id}</p>
+							<button class="comment__btn">show comment</button>
+						</div>
+					</div>
+				`;
+
+      const commentDiv = document.createElement("div");
+      commentDiv.classList.add("comment");
+      commentDiv.innerHTML = htmlString;
+      return commentDiv;
+    };
+
+    const createCommentBlock = (nodeWrapper, commentsData) => {
+      commentsData.forEach((comment) => {
+        const commentNode = nodeWrapper.appendChild(
+          createTemplateCommentBlock(comment)
+        );
+        if (!comment.comments.length) return;
+        createCommentBlock(commentNode, comment.comments);
+      });
+    };
+
+    createCommentBlock(domWrapperForComments, comments);
+  });
+</script>
